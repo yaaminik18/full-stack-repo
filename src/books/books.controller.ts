@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put ,Res} from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, ParseIntPipe, Patch, Post, Put ,Res, ValidationPipe} from '@nestjs/common';
 import { BooksService } from './books.service';
 import { Book } from "./books.dto";
 import { response } from 'express';
@@ -8,39 +8,40 @@ import { UserBook } from './books.model';
 export class BooksController {
     constructor(private booksService:BooksService){}
     //get all books
-    /*
     @Get()
-    getAllBooks(){
-        return this.booksService.getBooks();
-    }
+        getAllBooks(){
+        return this.booksService.findAll();
+        }
+
+    //get book by id
+    @Get(':id')
+        getBookById(@Param('id')id:number){
+        return this.booksService.findOne(id);
+        }
+   
+    //add a new book
     @Post('/add')
-    add(@Body() book:Book){
-    return this.booksService.addBooks(book);
-    }
-
-    @Put('/update')
-    update(@Body() book:Book){
-    return this.booksService.updateBooks(book);
-    }
-
-    @Delete('/delete/:id')
-    delete(@Param('id') bookid:number){
-    return this.booksService.deleteBook(bookid);
-    }
-*/
-@Get()
-    async fetchAll(@Res() response) {
-        const books = await this.booksService.findAll();
-        return response.status(HttpStatus.OK).json({
-            books
-        })
-    }
-
-@Post('/add')
-    async addBooks(@Res() response, @Body()userbook:UserBook){
-        const newBook=await this.booksService.add(userbook);
+        async addBooks(@Res() response, @Body(ValidationPipe)userbook:Book){
+        console.log(userbook)
+        const newBook=await this.booksService.create(userbook);
         return response.status(HttpStatus.OK).json({
             newBook
-    })
-}
+        })
+        }
+
+    //update data
+    @Put(':id/update')
+        updateBook(@Param('id')id:number,@Body(ValidationPipe)updatedbook:Book){
+            console.log(updatedbook)
+        return this.booksService.update(id,updatedbook)
+        }
+    
+    //delete data with specified id
+    @Delete('/delete/:id')
+        delete(@Param('id')id:number){
+        return this.booksService.delete(id)
+        }
+    
+
+   
 }

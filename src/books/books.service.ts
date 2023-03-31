@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { where } from 'sequelize';
 import { Book } from './books.dto';
 import { BookIn } from './books.interface';
 import { UserBook } from './books.model';
+import { log } from 'console';
 
 @Injectable()
 
@@ -10,47 +12,52 @@ export class BooksService {
     constructor(
         @InjectModel(UserBook)
         private userModel: typeof UserBook,
-      ) {}
-
+        
+      ) {};
+     
     async findAll(): Promise<UserBook[]> {
         return this.userModel.findAll();
+        } 
+
+    async findOne(id):Promise<UserBook>{
+        return this.userModel.findOne(id)
     }
 
-    async add(userbook:UserBook):Promise<UserBook>{
-        return this.userModel.create();
-    }
-   /* public books: Book[]=[];
+
+    create(bookDto:Book){
+        console.log(bookDto)
+        let userbook:UserBook=new UserBook()
+        return this.userModel.create(
+            {bookName:bookDto.bookName,
+            authorName:bookDto.authorName,
+            year:bookDto.year})
+        }
+
     
-    //find all books
-    
-    getBooks() : Book[]{
-        return this.books;
+    update(id:number,bookDto:Book){
+        console.log(bookDto);
+        this.userModel.update(
+            {bookName:bookDto.bookName,
+            authorName:bookDto.authorName,
+            year:bookDto.year}, 
+                {where:
+                    {id:id}})
     }
 
-    //add books
-    addBooks(book:Book) : BookIn{
-        this.books.push(book);
-        console.log('book has been successfully added');
-        return{ msg:'book has been succesfully added'} ;
-    }
 
-    //update books
-    updateBooks(book:Book) : string{
-        let index=this.books.findIndex((currentBook)=>{
-            return currentBook.id===book.id;
-        })
-        this.books[index]=book;
-        console.log('book has been successfully updated');
-        return'book has been successfully updated';
+    delete(delid:number){
+        return this.userModel.destroy({
+            where: {
+               id: delid //this will be your id that you want to delete
+            }
+         }).then(function(rowDeleted){ // rowDeleted will return number of rows deleted
+           if(rowDeleted === 1){
+              console.log('Deleted successfully');
+            }
+         }, function(err){
+             console.log(err); 
+         });
         
     }
-
-    //delete book
-    deleteBook(id:number):string{
-       this.books=this.books.filter((book)=>{
-        return book.id!==id
-       })
-        console.log('book has been successfully deleted');
-        return'book has been successfully deleted';  
-    }*/
+    
 }

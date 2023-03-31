@@ -1,19 +1,17 @@
 import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 
-
+//expecting from user
 
 export class Book{
     @IsNotEmpty()
     @IsString()
-    name:string;
+    bookName:string;
 
     @IsString()
-    author:string;
-
     @IsNotEmpty()
-    @IsNumber()
-    id:number;
+    authorName:string;
 
     @IsNumber()
+    @IsNotEmpty()
     year:number
 }

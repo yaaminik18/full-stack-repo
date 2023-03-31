@@ -12,12 +12,12 @@ export class UserBook extends Model {
   @Column({autoIncrement:true, primaryKey:true})
   id:number;
 
-  @Column({ allowNull: false })
+  @Column/*({ allowNull: false })*/
   bookName: string;
 
-  @Column({ allowNull: false })
+  @Column/*({ allowNull: false })*/
   authorName: string;
 
   @Column
-  year: boolean;
+  year: number;
 }
